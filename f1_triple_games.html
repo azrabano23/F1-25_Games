@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F1 Triple Games Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a, #2d1b1b);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(225, 6, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #e10600, #ff6b35, #e10600);
+            box-shadow: 
+                0 4px 25px rgba(225, 6, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5em;
+            font-weight: 900;
+            text-shadow: 
+                0 0 10px rgba(225, 6, 0, 0.8),
+                0 0 20px rgba(225, 6, 0, 0.6),
+                2px 2px 4px rgba(0,0,0,0.8);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.4em;
+            font-weight: 400;
+            opacity: 0.95;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .games-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 30px;
+            justify-content: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                0 10px 30px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(225, 6, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(225, 6, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 420px;
+            max-width: 480px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #e10600, #ff6b35, #e10600);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(225, 6, 0, 0.4),
+                0 0 30px rgba(225, 6, 0, 0.3);
+            border-color: rgba(225, 6, 0, 0.6);
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2em;
+            color: #e10600;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(225, 6, 0, 0.5);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .game-canvas {
+            border: 3px solid #e10600;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto 15px;
+            background: #000;
+        }
+
+        .game-info {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .score-display {
+            font-size: 1.1em;
+            color: #ff6b35;
+            margin: 5px 0;
+        }
+
+        .controls {
+            background: rgba(225, 6, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e10600;
+        }
+
+        .controls h4 {
+            color: #ff6b35;
+            margin-bottom: 8px;
+        }
+
+        .controls p {
+            font-size: 0.9em;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e10600, #ff6b35, #e10600);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 15px 5px;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(225, 6, 0, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.08) translateY(-2px);
+            box-shadow: 
+                0 8px 25px rgba(225, 6, 0, 0.5),
+                0 0 20px rgba(225, 6, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: scale(1.02) translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            background: rgba(225, 6, 0, 0.2);
+            border-color: #e10600;
+        }
+
+        .quiz-option.correct {
+            background: rgba(0, 255, 0, 0.3);
+            border-color: #00ff00;
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(255, 0, 0, 0.3);
+            border-color: #ff0000;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e10600, #ff6b35);
+            transition: width 0.1s linear;
+        }
+
+        .leaderboard {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border: 2px solid #444;
+        }
+
+        .leaderboard h3 {
+            color: #e10600;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .tab-button {
+            background: rgba(225, 6, 0, 0.2);
+            color: white;
+            border: 2px solid #444;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(90deg, #e10600, #ff6b35);
+            border-color: #e10600;
+        }
+
+        .leaderboard-content {
+            display: none;
+        }
+
+        .leaderboard-content.active {
+            display: block;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .leaderboard-table th {
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .rank-1 { color: #ffd700; }
+        .rank-2 { color: #c0c0c0; }
+        .rank-3 { color: #cd7f32; }
+
+        .name-input-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .name-input-content {
+            background: linear-gradient(145deg, #2a2a2a, #1f1f1f);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #e10600;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .name-input-content h3 {
+            color: #e10600;
+            margin-bottom: 20px;
+        }
+
+        .name-input-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #444;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+
+        .name-input-content input:focus {
+            outline: none;
+            border-color: #e10600;
+        }
+
+        @media (max-width: 768px) {
+            .games-container {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .game-card {
+                min-width: auto;
+                max-width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .leaderboard-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab-button {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏎️ F1 Triple Games Collection</h1>
+        <p>Three exciting Formula 1 games to test your skills!</p>
+    </div>
+
+    <div class="games-container">
+        <!-- Game 1: F1 Racing Game -->
+        <div class="game-card">
+            <h2 class="game-title">🏁 F1 Racing Challenge</h2>
+            <canvas id="racingCanvas" class="game-canvas" width="380" height="300"></canvas>
+            <div class="game-info">
+                <div class="score-display">Lap: <span id="racingLap">1</span> / 5</div>
+                <div class="score-display">Score: <span id="racingScore">0</span></div>
+                <div class="score-display">Speed: <span id="racingSpeed">0</span> km/h</div>
+            </div>
+            <button class="btn" onclick="startRacing()" id="racingButton">Start Racing</button>
+            <div class="controls">
+                <h4>Controls:</h4>
+                <p><strong>W:</strong> Accelerate | <strong>S:</strong> Brake<br>
+                <strong>A:</strong> Turn Left | <strong>D:</strong> Turn Right</p>
+            </div>
+        </div>
+
+        <!-- Game 2: Pit Stop Challenge -->
+        <div class="game-card">
+            <h2 class="game-title">⚡ Pit Stop Challenge</h2>
+            <canvas id="pitstopCanvas" class="game-canvas" width="380" height="300"></canvas>
+            <div class="game-info">
+                <div class="score-display">Time: <span id="pitstopTime">0.0</span>s</div>
+                <div class="score-display">Best: <span id="pitstopBest">--</span>s</div>
+                <div class="score-display">Tasks: <span id="pitstopTasks">0</span>/4</div>
+            </div>
+            <button class="btn" onclick="startPitStop()">Start Pit Stop</button>
+            <div class="controls">
+                <h4>Instructions:</h4>
+                <p>Click on the highlighted car parts in order:<br>
+                <strong>1.</strong> Front Wing | <strong>2.</strong> Tires<br>
+                <strong>3.</strong> Fuel | <strong>4.</strong> Rear Wing</p>
+            </div>
+        </div>
+
+        <!-- Game 3: F1 Driver Quiz -->
+        <div class="game-card">
+            <h2 class="game-title">🧠 F1 Driver Quiz</h2>
+            <div id="quizContainer">
+                <div class="game-info">
+                    <div class="score-display">Question: <span id="quizQuestion">1</span>/10</div>
+                    <div class="score-display">Score: <span id="quizScore">0</span></div>
+                    <div class="timer-bar">
+                        <div id="quizTimer" class="timer-fill" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div id="questionText" style="font-size: 1.1em; margin: 20px 0; text-align: center;">
+                    Click Start Quiz to begin!
+                </div>
+                <div id="quizOptions" class="quiz-options"></div>
+                <button class="btn" onclick="startQuiz()" id="quizButton">Start Quiz</button>
+            </div>
+            <div class="controls">
+                <h4>Quiz Rules:</h4>
+                <p>Answer F1 questions quickly!<br>
+                <strong>+10 points</strong> for correct answers<br>
+                <strong>15 seconds</strong> per question</p>
+            </div>
+        </div>
+
+        <!-- Game 4: F1 Strategy Challenge -->
+        <div class="game-card">
+            <h2 class="game-title">🏆 Strategy Master</h2>
+            <canvas id="strategyCanvas" class="game-canvas" width="380" height="300"></canvas>
+            <div class="game-info">
+                <div class="score-display">Turn: <span id="strategyTurn">1</span>/20</div>
+                <div class="score-display">Points: <span id="strategyPoints">0</span></div>
+                <div class="score-display">Fuel: <span id="strategyFuel">100</span>%</div>
+            </div>
+            <button class="btn" onclick="startStrategy()" id="strategyButton">Start Strategy</button>
+            <div class="controls">
+                <h4>Strategy:</h4>
+                <p>Make tactical decisions to win the championship!<br>
+                <strong>M:</strong> Pit Stop | <strong>W:</strong> Push | <strong>S:</strong> Conserve<br>
+                Manage fuel, tires, and weather conditions</p>
+            </div>
+        </div>
+
+        <!-- Game 5: F1 Reaction Test -->
+        <div class="game-card">
+            <h2 class="game-title">⚡ Reaction Test</h2>
+            <canvas id="reactionCanvas" class="game-canvas" width="380" height="300"></canvas>
+            <div class="game-info">
+                <div class="score-display">Best Time: <span id="reactionBest">--</span>ms</div>
+                <div class="score-display">Average: <span id="reactionAvg">--</span>ms</div>
+                <div class="score-display">Round: <span id="reactionRound">0</span>/5</div>
+            </div>
+            <button class="btn" onclick="startReaction()" id="reactionButton">Start Reaction Test</button>
+            <div class="controls">
+                <h4>Instructions:</h4>
+                <p>Click as fast as possible when lights go out!<br>
+                <strong>Red:</strong> Wait | <strong>Green:</strong> GO!<br>
+                Test your F1 start reflexes</p>
+            </div>
+        </div>
+
+        <!-- Game 6: F1 Memory Challenge -->
+        <div class="game-card">
+            <h2 class="game-title">🧩 Memory Challenge</h2>
+            <canvas id="memoryCanvas" class="game-canvas" width="380" height="300"></canvas>
+            <div class="game-info">
+                <div class="score-display">Level: <span id="memoryLevel">1</span></div>
+                <div class="score-display">Score: <span id="memoryScore">0</span></div>
+                <div class="score-display">Lives: <span id="memoryLives">3</span></div>
+            </div>
+            <button class="btn" onclick="startMemory()" id="memoryButton">Start Memory</button>
+            <div class="controls">
+                <h4>Memory Rules:</h4>
+                <p>Remember the sequence of F1 car positions!<br>
+                <strong>Click:</strong> Repeat sequence<br>
+                Each level adds one more car to remember</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Section -->
+    <div class="leaderboard">
+        <h3>🏆 Leaderboards</h3>
+        <div class="leaderboard-tabs">
+            <button class="tab-button active" onclick="showLeaderboard('racing')">Racing</button>
+            <button class="tab-button" onclick="showLeaderboard('pitstop')">Pit Stop</button>
+            <button class="tab-button" onclick="showLeaderboard('quiz')">Quiz</button>
+            <button class="tab-button" onclick="showLeaderboard('strategy')">Strategy</button>
+            <button class="tab-button" onclick="showLeaderboard('reaction')">Reaction</button>
+            <button class="tab-button" onclick="showLeaderboard('memory')">Memory</button>
+        </div>
+        
+        <div id="racing-leaderboard" class="leaderboard-content active">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Laps Completed</th>
+                    </tr>
+                </thead>
+                <tbody id="racing-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="pitstop-leaderboard" class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Best Time</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="pitstop-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="quiz-leaderboard" class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Questions Correct</th>
+                    </tr>
+                </thead>
+                <tbody id="quiz-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="strategy-leaderboard" class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Championship Points</th>
+                        <th>Turns Completed</th>
+                    </tr>
+                </thead>
+                <tbody id="strategy-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="reaction-leaderboard" class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Best Time</th>
+                        <th>Average Time</th>
+                    </tr>
+                </thead>
+                <tbody id="reaction-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="memory-leaderboard" class="leaderboard-content">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>High Score</th>
+                        <th>Max Level</th>
+                    </tr>
+                </thead>
+                <tbody id="memory-scores">
+                    <tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Name Input Modal -->
+    <div id="nameInputModal" class="name-input-modal">
+        <div class="name-input-content">
+            <h3>🏆 New High Score!</h3>
+            <p>Enter your name for the leaderboard:</p>
+            <input type="text" id="playerNameInput" placeholder="Your name" maxlength="20">
+            <div style="margin-top: 20px;">
+                <button class="btn" onclick="submitScore()">Submit</button>
+                <button class="btn" onclick="closeNameModal()" style="background: #666;">Skip</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game 1: F1 Racing Game
+        class F1RacingGame {
+            constructor() {
+                this.canvas = document.getElementById('racingCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.car = {
+                    x: 190,
+                    y: 250,
+                    angle: -Math.PI / 2,
+                    speed: 0,
+                    maxSpeed: 6
+                };
+                this.obstacles = [];
+                this.lap = 1;
+                this.score = 0;
+                this.keys = {};
+                this.checkpoints = [];
+                this.currentCheckpoint = 0;
+                
+                this.initGame();
+                this.gameLoop();
+            }
+
+            initGame() {
+                // Create track checkpoints (oval track)
+                for (let i = 0; i < 8; i++) {
+                    const angle = (i / 8) * Math.PI * 2;
+                    this.checkpoints.push({
+                        x: 190 + Math.cos(angle) * 120,
+                        y: 150 + Math.sin(angle) * 80,
+                        passed: false
+                    });
+                }
+
+                // Create obstacles
+                for (let i = 0; i < 5; i++) {
+                    this.obstacles.push({
+                        x: Math.random() * 300 + 40,
+                        y: Math.random() * 200 + 50,
+                        width: 15,
+                        height: 15
+                    });
+                }
+
+                // Event listeners
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key.toLowerCase()] = true;
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key.toLowerCase()] = false;
+                });
+            }
+
+            update() {
+                // Car controls
+                if (this.keys['w']) {
+                    this.car.speed = Math.min(this.car.speed + 0.3, this.car.maxSpeed);
+                }
+                if (this.keys['s']) {
+                    this.car.speed = Math.max(this.car.speed - 0.4, -this.car.maxSpeed / 2);
+                }
+                if (this.keys['a'] && Math.abs(this.car.speed) > 0.5) {
+                    this.car.angle -= 0.08;
+                }
+                if (this.keys['d'] && Math.abs(this.car.speed) > 0.5) {
+                    this.car.angle += 0.08;
+                }
+
+                // Apply friction
+                this.car.speed *= 0.98;
+
+                // Update position
+                this.car.x += Math.cos(this.car.angle) * this.car.speed;
+                this.car.y += Math.sin(this.car.angle) * this.car.speed;
+
+                // Boundary collision
+                if (this.car.x < 20 || this.car.x > 360 || this.car.y < 20 || this.car.y > 280) {
+                    this.car.speed *= -0.5;
+                    this.car.x = Math.max(20, Math.min(360, this.car.x));
+                    this.car.y = Math.max(20, Math.min(280, this.car.y));
+                    this.score = Math.max(0, this.score - 10);
+                }
+
+                // Check checkpoints
+                this.checkCheckpoints();
+
+                // Update displays
+                document.getElementById('racingLap').textContent = this.lap;
+                document.getElementById('racingScore').textContent = this.score;
+                document.getElementById('racingSpeed').textContent = Math.round(Math.abs(this.car.speed) * 30);
+            }
+
+            checkCheckpoints() {
+                const checkpoint = this.checkpoints[this.currentCheckpoint];
+                const dist = Math.sqrt(
+                    Math.pow(this.car.x - checkpoint.x, 2) + 
+                    Math.pow(this.car.y - checkpoint.y, 2)
+                );
+
+                if (dist < 30) {
+                    checkpoint.passed = true;
+                    this.currentCheckpoint = (this.currentCheckpoint + 1) % this.checkpoints.length;
+                    
+                    if (this.currentCheckpoint === 0) {
+                        this.lap++;
+                        this.score += 100;
+                        
+                        if (this.lap > 5) {
+                            const scoreData = {
+                                score: this.score,
+                                laps: 5,
+                                date: new Date().toLocaleDateString()
+                            };
+                            
+                            if (checkHighScore('racing', scoreData)) {
+                                showNameModal('racing', scoreData);
+                            } else {
+                                alert(`Race Complete! Final Score: ${this.score}`);
+                            }
+                            
+                            this.resetGame();
+                        }
+                        
+                        // Reset checkpoints
+                        this.checkpoints.forEach(cp => cp.passed = false);
+                    } else {
+                        this.score += 10;
+                    }
+                }
+            }
+
+            resetGame() {
+                this.car = { x: 190, y: 250, angle: -Math.PI / 2, speed: 0, maxSpeed: 6 };
+                this.lap = 1;
+                this.score = 0;
+                this.currentCheckpoint = 0;
+                this.checkpoints.forEach(cp => cp.passed = false);
+            }
+
+            draw() {
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw track (oval)
+                this.ctx.strokeStyle = '#666';
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                this.ctx.ellipse(190, 150, 140, 100, 0, 0, Math.PI * 2);
+                this.ctx.stroke();
+
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.ellipse(190, 150, 100, 70, 0, 0, Math.PI * 2);
+                this.ctx.stroke();
+
+                // Draw checkpoints
+                this.checkpoints.forEach((checkpoint, index) => {
+                    this.ctx.fillStyle = index === this.currentCheckpoint ? '#00ff00' : '#ffff00';
+                    this.ctx.fillRect(checkpoint.x - 5, checkpoint.y - 5, 10, 10);
+                });
+
+                // Draw obstacles
+                this.ctx.fillStyle = '#ff4444';
+                this.obstacles.forEach(obstacle => {
+                    this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+                });
+
+                // Draw car
+                this.ctx.save();
+                this.ctx.translate(this.car.x, this.car.y);
+                this.ctx.rotate(this.car.angle);
+                this.ctx.fillStyle = '#e10600';
+                this.ctx.fillRect(-8, -4, 16, 8);
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillRect(6, -2, 2, 4);
+                this.ctx.restore();
+            }
+
+            gameLoop() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+
+        // Game 2: Pit Stop Challenge
+        class PitStopGame {
+            constructor() {
+                this.canvas = document.getElementById('pitstopCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameState = 'waiting'; // waiting, playing, complete
+                this.startTime = 0;
+                this.currentTask = 0;
+                this.bestTime = localStorage.getItem('pitStopBest') || null;
+                this.tasks = [
+                    { name: 'Front Wing', x: 190, y: 120, width: 40, height: 20, color: '#ff6b35' },
+                    { name: 'Tires', x: 160, y: 160, width: 60, height: 40, color: '#333' },
+                    { name: 'Fuel', x: 220, y: 160, width: 30, height: 40, color: '#ffff00' },
+                    { name: 'Rear Wing', x: 190, y: 200, width: 40, height: 20, color: '#ff6b35' }
+                ];
+
+                if (this.bestTime) {
+                    document.getElementById('pitstopBest').textContent = this.bestTime;
+                }
+
+                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                this.draw();
+            }
+
+            handleClick(e) {
+                if (this.gameState !== 'playing') return;
+
+                const rect = this.canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+
+                const task = this.tasks[this.currentTask];
+                if (clickX >= task.x && clickX <= task.x + task.width &&
+                    clickY >= task.y && clickY <= task.y + task.height) {
+                    
+                    this.currentTask++;
+                    document.getElementById('pitstopTasks').textContent = this.currentTask;
+
+                    if (this.currentTask >= this.tasks.length) {
+                        this.completeGame();
+                    }
+                }
+            }
+
+            completeGame() {
+                this.gameState = 'complete';
+                const totalTime = ((Date.now() - this.startTime) / 1000).toFixed(1);
+                
+                const scoreData = {
+                    time: totalTime,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                if (!this.bestTime || parseFloat(totalTime) < parseFloat(this.bestTime)) {
+                    this.bestTime = totalTime;
+                    localStorage.setItem('pitStopBest', this.bestTime);
+                    document.getElementById('pitstopBest').textContent = this.bestTime;
+                    
+                    if (checkHighScore('pitstop', scoreData)) {
+                        showNameModal('pitstop', scoreData);
+                    } else {
+                        alert(`New Best Time: ${totalTime}s!`);
+                    }
+                } else {
+                    if (checkHighScore('pitstop', scoreData)) {
+                        showNameModal('pitstop', scoreData);
+                    } else {
+                        alert(`Pit Stop Complete: ${totalTime}s`);
+                    }
+                }
+
+                document.getElementById('pitstopTime').textContent = totalTime;
+            }
+
+            draw() {
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                // Draw F1 car
+                this.ctx.fillStyle = '#e10600';
+                this.ctx.fillRect(170, 140, 40, 80);
+                
+                // Draw tasks
+                this.tasks.forEach((task, index) => {
+                    if (this.gameState === 'playing' && index === this.currentTask) {
+                        this.ctx.fillStyle = '#00ff00';
+                        this.ctx.fillRect(task.x - 5, task.y - 5, task.width + 10, task.height + 10);
+                    }
+                    
+                    this.ctx.fillStyle = task.color;
+                    this.ctx.fillRect(task.x, task.y, task.width, task.height);
+                    
+                    if (index < this.currentTask) {
+                        this.ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+                        this.ctx.fillRect(task.x, task.y, task.width, task.height);
+                    }
+                });
+
+                // Draw instructions
+                if (this.gameState === 'waiting') {
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '16px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('Click Start Pit Stop to begin!', 190, 50);
+                } else if (this.gameState === 'playing') {
+                    this.ctx.fillStyle = '#ffff00';
+                    this.ctx.font = '14px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(`Click: ${this.tasks[this.currentTask].name}`, 190, 30);
+                }
+
+                this.ctx.textAlign = 'left';
+                
+                if (this.gameState === 'playing') {
+                    requestAnimationFrame(() => this.draw());
+                }
+            }
+        }
+
+        // Game 3: F1 Driver Quiz
+        class F1Quiz {
+            constructor() {
+                this.questions = [
+                    {
+                        question: "Who holds the record for most F1 World Championships?",
+                        options: ["Lewis Hamilton", "Michael Schumacher", "Ayrton Senna", "Sebastian Vettel"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which team has won the most Constructors' Championships?",
+                        options: ["McLaren", "Williams", "Ferrari", "Mercedes"],
+                        correct: 2
+                    },
+                    {
+                        question: "What is the current number of races in an F1 season?",
+                        options: ["20", "22", "23", "24"],
+                        correct: 2
+                    },
+                    {
+                        question: "Which circuit is known as 'The Temple of Speed'?",
+                        options: ["Silverstone", "Monaco", "Monza", "Spa"],
+                        correct: 2
+                    },
+                    {
+                        question: "Who was the youngest F1 World Champion?",
+                        options: ["Max Verstappen", "Sebastian Vettel", "Lewis Hamilton", "Fernando Alonso"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which driver has the most Grand Prix wins?",
+                        options: ["Michael Schumacher", "Lewis Hamilton", "Ayrton Senna", "Alain Prost"],
+                        correct: 1
+                    },
+                    {
+                        question: "What does DRS stand for?",
+                        options: ["Drag Reduction System", "Direct Racing System", "Drive Reduction Speed", "Dynamic Race System"],
+                        correct: 0
+                    },
+                    {
+                        question: "Which country hosts the Monaco Grand Prix?",
+                        options: ["France", "Italy", "Monaco", "Spain"],
+                        correct: 2
+                    },
+                    {
+                        question: "How many points does a race winner receive?",
+                        options: ["20", "25", "30", "15"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which team is known as the 'Prancing Horse'?",
+                        options: ["Red Bull", "Ferrari", "McLaren", "Alfa Romeo"],
+                        correct: 1
+                    }
+                ];
+                
+                this.currentQuestion = 0;
+                this.score = 0;
+                this.gameState = 'waiting';
+                this.timeLeft = 15;
+                this.timer = null;
+            }
+
+            startQuiz() {
+                this.currentQuestion = 0;
+                this.score = 0;
+                this.gameState = 'playing';
+                this.timeLeft = 15;
+                
+                document.getElementById('quizButton').style.display = 'none';
+                this.showQuestion();
+            }
+
+            showQuestion() {
+                if (this.currentQuestion >= this.questions.length) {
+                    this.endQuiz();
+                    return;
+                }
+
+                const question = this.questions[this.currentQuestion];
+                document.getElementById('questionText').textContent = question.question;
+                document.getElementById('quizQuestion').textContent = this.currentQuestion + 1;
+                document.getElementById('quizScore').textContent = this.score;
+
+                const optionsContainer = document.getElementById('quizOptions');
+                optionsContainer.innerHTML = '';
+
+                question.options.forEach((option, index) => {
+                    const button = document.createElement('div');
+                    button.className = 'quiz-option';
+                    button.textContent = option;
+                    button.onclick = () => this.selectAnswer(index);
+                    optionsContainer.appendChild(button);
+                });
+
+                this.startTimer();
+            }
+
+            selectAnswer(selectedIndex) {
+                if (this.gameState !== 'playing') return;
+
+                clearInterval(this.timer);
+                const question = this.questions[this.currentQuestion];
+                const options = document.querySelectorAll('.quiz-option');
+
+                if (selectedIndex === question.correct) {
+                    this.score += 10;
+                    options[selectedIndex].classList.add('correct');
+                } else {
+                    options[selectedIndex].classList.add('incorrect');
+                    options[question.correct].classList.add('correct');
+                }
+
+                setTimeout(() => {
+                    this.currentQuestion++;
+                    this.showQuestion();
+                }, 1500);
+            }
+
+            startTimer() {
+                this.timeLeft = 15;
+                const timerBar = document.getElementById('quizTimer');
+                
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    const percentage = (this.timeLeft / 15) * 100;
+                    timerBar.style.width = percentage + '%';
+
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timer);
+                        this.selectAnswer(-1); // Time up
+                    }
+                }, 1000);
+            }
+
+            endQuiz() {
+                this.gameState = 'complete';
+                clearInterval(this.timer);
+                
+                document.getElementById('questionText').textContent = 
+                    `Quiz Complete! Final Score: ${this.score}/100`;
+                document.getElementById('quizOptions').innerHTML = '';
+                
+                const button = document.getElementById('quizButton');
+                button.textContent = 'Play Again';
+                button.style.display = 'block';
+                button.onclick = () => {
+                    button.textContent = 'Start Quiz';
+                    this.startQuiz();
+                };
+            }
+        }
+
+        // Game 4: F1 Strategy Challenge
+        class F1StrategyGame {
+            constructor() {
+                this.canvas = document.getElementById('strategyCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameState = 'waiting';
+                this.turn = 1;
+                this.points = 0;
+                this.fuel = 100;
+                this.tireWear = 0;
+                this.weather = 'dry';
+                this.position = 5;
+                this.decisions = [];
+                this.keys = {};
+                
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.code] = true;
+                    if (this.gameState === 'playing') {
+                        this.handleInput(e.code);
+                    }
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.code] = false;
+                });
+                
+                this.draw();
+            }
+            
+            startGame() {
+                this.gameState = 'playing';
+                this.turn = 1;
+                this.points = 0;
+                this.fuel = 100;
+                this.tireWear = 0;
+                this.position = 5;
+                this.decisions = [];
+                this.weather = Math.random() > 0.7 ? 'rain' : 'dry';
+                this.gameLoop();
+            }
+            
+            handleInput(keyCode) {
+                if (keyCode === 'KeyM') {
+                    this.pitStop();
+                } else if (keyCode === 'KeyW') {
+                    this.pushHard();
+                } else if (keyCode === 'KeyS') {
+                    this.conserve();
+                }
+            }
+            
+            pitStop() {
+                if (this.fuel < 100 || this.tireWear > 50) {
+                    this.fuel = 100;
+                    this.tireWear = 0;
+                    this.position = Math.min(20, this.position + 3);
+                    this.decisions.push('Pit Stop');
+                }
+            }
+            
+            pushHard() {
+                if (this.fuel > 10) {
+                    this.fuel -= 8;
+                    this.tireWear += 15;
+                    if (this.position > 1) {
+                        this.position -= Math.random() > 0.5 ? 1 : 0;
+                        this.points += this.position <= 10 ? (11 - this.position) * 2 : 0;
+                    }
+                    this.decisions.push('Push Hard');
+                }
+            }
+            
+            conserve() {
+                this.fuel -= 3;
+                this.tireWear += 5;
+                this.decisions.push('Conserve');
+            }
+            
+            update() {
+                if (this.gameState !== 'playing') return;
+                
+                // Random events
+                if (Math.random() > 0.9) {
+                    this.weather = this.weather === 'dry' ? 'rain' : 'dry';
+                }
+                
+                // Fuel and tire degradation
+                this.fuel = Math.max(0, this.fuel - 2);
+                this.tireWear += 3;
+                
+                // Check if out of fuel
+                if (this.fuel <= 0) {
+                    this.position = Math.min(20, this.position + 5);
+                }
+                
+                // Update displays
+                document.getElementById('strategyTurn').textContent = this.turn;
+                document.getElementById('strategyPoints').textContent = this.points;
+                document.getElementById('strategyFuel').textContent = Math.round(this.fuel);
+                
+                this.turn++;
+                if (this.turn > 20) {
+                    this.endGame();
+                }
+            }
+            
+            endGame() {
+                this.gameState = 'complete';
+                const finalPoints = this.points + (this.position <= 10 ? (11 - this.position) * 10 : 0);
+                
+                const scoreData = {
+                    score: finalPoints,
+                    turns: 20,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                if (checkHighScore('strategy', scoreData)) {
+                    showNameModal('strategy', scoreData);
+                } else {
+                    alert(`Strategy Complete! Final Points: ${finalPoints}`);
+                }
+                
+                document.getElementById('strategyButton').textContent = 'Start Strategy';
+                document.getElementById('strategyButton').disabled = false;
+            }
+            
+            draw() {
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.gameState === 'waiting') {
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '20px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('F1 Strategy Challenge', 190, 100);
+                    this.ctx.font = '14px Rajdhani';
+                    this.ctx.fillText('Make tactical decisions to win!', 190, 130);
+                    this.ctx.fillText('M: Pit | W: Push | S: Conserve', 190, 200);
+                } else if (this.gameState === 'playing') {
+                    // Draw track
+                    this.ctx.strokeStyle = '#666';
+                    this.ctx.lineWidth = 40;
+                    this.ctx.beginPath();
+                    this.ctx.rect(50, 100, 280, 20);
+                    this.ctx.stroke();
+                    
+                    // Draw car position
+                    const carX = 50 + (280 * (21 - this.position) / 20);
+                    this.ctx.fillStyle = '#e10600';
+                    this.ctx.fillRect(carX - 10, 105, 20, 10);
+                    
+                    // Draw position number
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(`P${this.position}`, carX, 140);
+                    
+                    // Draw weather
+                    this.ctx.fillStyle = this.weather === 'rain' ? '#4444ff' : '#ffff00';
+                    this.ctx.fillText(`Weather: ${this.weather}`, 190, 50);
+                    
+                    // Draw fuel bar
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.fillRect(50, 170, 100, 20);
+                    this.ctx.fillStyle = this.fuel > 30 ? '#00ff00' : '#ff0000';
+                    this.ctx.fillRect(50, 170, this.fuel, 20);
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '12px Rajdhani';
+                    this.ctx.textAlign = 'left';
+                    this.ctx.fillText('Fuel', 50, 210);
+                    
+                    // Draw tire wear
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.fillRect(230, 170, 100, 20);
+                    this.ctx.fillStyle = this.tireWear < 50 ? '#00ff00' : '#ff0000';
+                    this.ctx.fillRect(230, 170, this.tireWear, 20);
+                    this.ctx.fillText('Tire Wear', 230, 210);
+                }
+                
+                this.ctx.textAlign = 'left';
+            }
+            
+            gameLoop() {
+                if (this.gameState === 'playing') {
+                    this.update();
+                    this.draw();
+                    setTimeout(() => this.gameLoop(), 1000); // 1 second per turn
+                }
+            }
+        }
+        
+        // Game 5: F1 Reaction Test
+        class F1ReactionGame {
+            constructor() {
+                this.canvas = document.getElementById('reactionCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameState = 'waiting';
+                this.round = 0;
+                this.times = [];
+                this.bestTime = localStorage.getItem('reactionBest') || null;
+                this.startTime = 0;
+                this.lights = [false, false, false, false, false];
+                
+                if (this.bestTime) {
+                    document.getElementById('reactionBest').textContent = this.bestTime;
+                }
+                
+                this.canvas.addEventListener('click', () => this.handleClick());
+                this.draw();
+            }
+            
+            startGame() {
+                this.gameState = 'playing';
+                this.round = 0;
+                this.times = [];
+                this.nextRound();
+            }
+            
+            nextRound() {
+                if (this.round >= 5) {
+                    this.endGame();
+                    return;
+                }
+                
+                this.round++;
+                this.gameState = 'waiting_lights';
+                this.lights = [false, false, false, false, false];
+                document.getElementById('reactionRound').textContent = this.round;
+                
+                // Light sequence
+                let lightIndex = 0;
+                const lightInterval = setInterval(() => {
+                    this.lights[lightIndex] = true;
+                    lightIndex++;
+                    this.draw();
+                    
+                    if (lightIndex >= 5) {
+                        clearInterval(lightInterval);
+                        // Random delay before lights out
+                        setTimeout(() => {
+                            this.lights = [false, false, false, false, false];
+                            this.gameState = 'go';
+                            this.startTime = Date.now();
+                            this.draw();
+                        }, 1000 + Math.random() * 3000);
+                    }
+                }, 1000);
+            }
+            
+            handleClick() {
+                if (this.gameState === 'go') {
+                    const reactionTime = Date.now() - this.startTime;
+                    this.times.push(reactionTime);
+                    
+                    this.gameState = 'result';
+                    this.draw();
+                    
+                    setTimeout(() => this.nextRound(), 2000);
+                } else if (this.gameState === 'waiting_lights') {
+                    // False start
+                    this.gameState = 'false_start';
+                    this.draw();
+                    setTimeout(() => this.nextRound(), 2000);
+                }
+            }
+            
+            endGame() {
+                this.gameState = 'complete';
+                const validTimes = this.times.filter(t => t > 0);
+                const avgTime = validTimes.length > 0 ? Math.round(validTimes.reduce((a, b) => a + b, 0) / validTimes.length) : 0;
+                const bestRoundTime = validTimes.length > 0 ? Math.min(...validTimes) : 0;
+                
+                document.getElementById('reactionAvg').textContent = avgTime;
+                
+                if (!this.bestTime || bestRoundTime < parseInt(this.bestTime)) {
+                    this.bestTime = bestRoundTime.toString();
+                    localStorage.setItem('reactionBest', this.bestTime);
+                    document.getElementById('reactionBest').textContent = this.bestTime;
+                }
+                
+                const scoreData = {
+                    bestTime: bestRoundTime,
+                    avgTime: avgTime,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                if (checkHighScore('reaction', scoreData)) {
+                    showNameModal('reaction', scoreData);
+                } else {
+                    alert(`Reaction Test Complete! Best: ${bestRoundTime}ms, Average: ${avgTime}ms`);
+                }
+                
+                document.getElementById('reactionButton').textContent = 'Start Reaction Test';
+                this.draw();
+            }
+            
+            draw() {
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.gameState === 'waiting') {
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '20px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('F1 Reaction Test', 190, 100);
+                    this.ctx.font = '14px Rajdhani';
+                    this.ctx.fillText('Click when lights go out!', 190, 130);
+                    this.ctx.fillText('Wait for all 5 lights, then GO!', 190, 200);
+                } else {
+                    // Draw F1 start lights
+                    for (let i = 0; i < 5; i++) {
+                        const x = 90 + i * 40;
+                        const y = 120;
+                        
+                        this.ctx.fillStyle = this.lights[i] ? '#ff0000' : '#330000';
+                        this.ctx.fillRect(x, y, 30, 50);
+                        
+                        this.ctx.strokeStyle = '#666';
+                        this.ctx.lineWidth = 2;
+                        this.ctx.strokeRect(x, y, 30, 50);
+                    }
+                    
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '16px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    
+                    if (this.gameState === 'waiting_lights') {
+                        this.ctx.fillText('Wait for lights out...', 190, 50);
+                    } else if (this.gameState === 'go') {
+                        this.ctx.fillStyle = '#00ff00';
+                        this.ctx.fillText('GO! CLICK NOW!', 190, 50);
+                    } else if (this.gameState === 'false_start') {
+                        this.ctx.fillStyle = '#ff0000';
+                        this.ctx.fillText('FALSE START!', 190, 50);
+                    } else if (this.gameState === 'result') {
+                        this.ctx.fillStyle = '#00ff00';
+                        this.ctx.fillText(`${this.times[this.times.length - 1]}ms`, 190, 50);
+                    } else if (this.gameState === 'complete') {
+                        this.ctx.fillText('Test Complete!', 190, 50);
+                        const validTimes = this.times.filter(t => t > 0);
+                        if (validTimes.length > 0) {
+                            this.ctx.fillText(`Best: ${Math.min(...validTimes)}ms`, 190, 220);
+                            this.ctx.fillText(`Average: ${Math.round(validTimes.reduce((a, b) => a + b, 0) / validTimes.length)}ms`, 190, 240);
+                        }
+                    }
+                }
+                
+                this.ctx.textAlign = 'left';
+            }
+        }
+        
+        // Game 6: F1 Memory Challenge
+        class F1MemoryGame {
+            constructor() {
+                this.canvas = document.getElementById('memoryCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameState = 'waiting';
+                this.level = 1;
+                this.score = 0;
+                this.lives = 3;
+                this.sequence = [];
+                this.playerSequence = [];
+                this.showingSequence = false;
+                this.sequenceIndex = 0;
+                this.cars = [];
+                
+                // Initialize car positions
+                for (let i = 0; i < 6; i++) {
+                    this.cars.push({
+                        x: 60 + (i % 3) * 100,
+                        y: 100 + Math.floor(i / 3) * 80,
+                        id: i,
+                        highlighted: false
+                    });
+                }
+                
+                this.canvas.addEventListener('click', (e) => this.handleClick(e));
+                this.draw();
+            }
+            
+            startGame() {
+                this.gameState = 'playing';
+                this.level = 1;
+                this.score = 0;
+                this.lives = 3;
+                this.sequence = [];
+                this.playerSequence = [];
+                this.nextLevel();
+            }
+            
+            nextLevel() {
+                this.sequence.push(Math.floor(Math.random() * 6));
+                this.playerSequence = [];
+                this.showSequence();
+                
+                document.getElementById('memoryLevel').textContent = this.level;
+                document.getElementById('memoryScore').textContent = this.score;
+                document.getElementById('memoryLives').textContent = this.lives;
+            }
+            
+            showSequence() {
+                this.showingSequence = true;
+                this.sequenceIndex = 0;
+                this.cars.forEach(car => car.highlighted = false);
+                
+                const showNext = () => {
+                    if (this.sequenceIndex < this.sequence.length) {
+                        this.cars.forEach(car => car.highlighted = false);
+                        this.cars[this.sequence[this.sequenceIndex]].highlighted = true;
+                        this.draw();
+                        
+                        setTimeout(() => {
+                            this.cars[this.sequence[this.sequenceIndex]].highlighted = false;
+                            this.draw();
+                            this.sequenceIndex++;
+                            setTimeout(showNext, 500);
+                        }, 800);
+                    } else {
+                        this.showingSequence = false;
+                    }
+                };
+                
+                setTimeout(showNext, 1000);
+            }
+            
+            handleClick(e) {
+                if (this.showingSequence || this.gameState !== 'playing') return;
+                
+                const rect = this.canvas.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                for (let car of this.cars) {
+                    if (clickX >= car.x - 25 && clickX <= car.x + 25 &&
+                        clickY >= car.y - 15 && clickY <= car.y + 15) {
+                        this.playerSequence.push(car.id);
+                        
+                        if (this.playerSequence[this.playerSequence.length - 1] !== 
+                            this.sequence[this.playerSequence.length - 1]) {
+                            // Wrong!
+                            this.lives--;
+                            if (this.lives <= 0) {
+                                this.endGame();
+                            } else {
+                                this.showSequence();
+                            }
+                        } else if (this.playerSequence.length === this.sequence.length) {
+                            // Level complete!
+                            this.score += this.level * 10;
+                            this.level++;
+                            setTimeout(() => this.nextLevel(), 1000);
+                        }
+                        
+                        document.getElementById('memoryLives').textContent = this.lives;
+                        break;
+                    }
+                }
+            }
+            
+            endGame() {
+                this.gameState = 'complete';
+                
+                const scoreData = {
+                    score: this.score,
+                    level: this.level - 1,
+                    date: new Date().toLocaleDateString()
+                };
+                
+                if (checkHighScore('memory', scoreData)) {
+                    showNameModal('memory', scoreData);
+                } else {
+                    alert(`Memory Challenge Complete! Score: ${this.score}, Level: ${this.level - 1}`);
+                }
+                
+                document.getElementById('memoryButton').textContent = 'Start Memory';
+                this.draw();
+            }
+            
+            draw() {
+                this.ctx.fillStyle = '#0a0a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.gameState === 'waiting') {
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '20px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('F1 Memory Challenge', 190, 100);
+                    this.ctx.font = '14px Rajdhani';
+                    this.ctx.fillText('Remember the car sequence!', 190, 130);
+                    this.ctx.fillText('Click cars in the same order', 190, 200);
+                } else {
+                    // Draw cars
+                    this.cars.forEach(car => {
+                        if (car.highlighted) {
+                            this.ctx.fillStyle = '#ffff00';
+                            this.ctx.fillRect(car.x - 30, car.y - 20, 60, 40);
+                        }
+                        
+                        this.ctx.fillStyle = '#e10600';
+                        this.ctx.fillRect(car.x - 25, car.y - 15, 50, 30);
+                        
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '12px Rajdhani';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.fillText((car.id + 1).toString(), car.x, car.y + 3);
+                    });
+                    
+                    // Instructions
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.font = '14px Rajdhani';
+                    this.ctx.textAlign = 'center';
+                    
+                    if (this.showingSequence) {
+                        this.ctx.fillText('Watch the sequence...', 190, 30);
+                    } else if (this.gameState === 'playing') {
+                        this.ctx.fillText('Click the cars in order!', 190, 30);
+                    } else if (this.gameState === 'complete') {
+                        this.ctx.fillText('Game Over!', 190, 30);
+                    }
+                }
+                
+                this.ctx.textAlign = 'left';
+            }
+        }
+
+        // Initialize games
+        const racingGame = new F1RacingGame();
+        const pitStopGame = new PitStopGame();
+        const quiz = new F1Quiz();
+        const strategyGame = new F1StrategyGame();
+        const reactionGame = new F1ReactionGame();
+        const memoryGame = new F1MemoryGame();
+
+        function startPitStop() {
+            pitStopGame.gameState = 'playing';
+            pitStopGame.startTime = Date.now();
+            pitStopGame.currentTask = 0;
+            document.getElementById('pitstopTasks').textContent = '0';
+            document.getElementById('pitstopTime').textContent = '0.0';
+            pitStopGame.draw();
+        }
+
+        function startQuiz() {
+            quiz.startQuiz();
+        }
+
+        function startRacing() {
+            racingGame.resetGame();
+            document.getElementById('racingButton').textContent = 'Racing...';
+            document.getElementById('racingButton').disabled = true;
+            
+            // Re-enable button after game completes or reset
+            setTimeout(() => {
+                document.getElementById('racingButton').textContent = 'Start Racing';
+                document.getElementById('racingButton').disabled = false;
+            }, 1000);
+        }
+
+        function startStrategy() {
+            strategyGame.startGame();
+            document.getElementById('strategyButton').textContent = 'Playing...';
+            document.getElementById('strategyButton').disabled = true;
+        }
+
+        function startReaction() {
+            reactionGame.startGame();
+            document.getElementById('reactionButton').textContent = 'Testing...';
+            document.getElementById('reactionButton').disabled = true;
+        }
+
+        function startMemory() {
+            memoryGame.startGame();
+            document.getElementById('memoryButton').textContent = 'Playing...';
+            document.getElementById('memoryButton').disabled = true;
+        }
+
+        // Update pit stop timer
+        setInterval(() => {
+            if (pitStopGame.gameState === 'playing') {
+                const elapsed = ((Date.now() - pitStopGame.startTime) / 1000).toFixed(1);
+                document.getElementById('pitstopTime').textContent = elapsed;
+            }
+        }, 100);
+
+        // Leaderboard System
+        let currentGame = null;
+        let currentScore = null;
+
+        function showLeaderboard(gameType) {
+            // Hide all leaderboard contents
+            document.querySelectorAll('.leaderboard-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected leaderboard
+            document.getElementById(`${gameType}-leaderboard`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load and display scores
+            displayLeaderboard(gameType);
+        }
+
+        function displayLeaderboard(gameType) {
+            const scores = JSON.parse(localStorage.getItem(`f1-${gameType}-scores`) || '[]');
+            const tbody = document.getElementById(`${gameType}-scores`);
+            
+            if (scores.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; opacity: 0.6;">No scores yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            scores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                
+                if (gameType === 'racing') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.score}</td>
+                        <td>${score.laps}</td>
+                    `;
+                } else if (gameType === 'pitstop') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.time}s</td>
+                        <td>${score.date}</td>
+                    `;
+                } else if (gameType === 'quiz') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.score}</td>
+                        <td>${score.correct}/10</td>
+                    `;
+                } else if (gameType === 'strategy') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.score}</td>
+                        <td>${score.turns}</td>
+                    `;
+                } else if (gameType === 'reaction') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.bestTime}ms</td>
+                        <td>${score.avgTime}ms</td>
+                    `;
+                } else if (gameType === 'memory') {
+                    row.innerHTML = `
+                        <td class="${rankClass}">#${index + 1}</td>
+                        <td>${score.name}</td>
+                        <td>${score.score}</td>
+                        <td>${score.level}</td>
+                    `;
+                }
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function checkHighScore(gameType, newScore) {
+            const scores = JSON.parse(localStorage.getItem(`f1-${gameType}-scores`) || '[]');
+            
+            // Check if it's a high score (top 10)
+            if (scores.length < 10) {
+                return true;
+            }
+            
+            if (gameType === 'racing' || gameType === 'quiz' || gameType === 'strategy' || gameType === 'memory') {
+                // Higher scores are better
+                return newScore.score > scores[scores.length - 1].score;
+            } else if (gameType === 'pitstop') {
+                // Lower times are better
+                return parseFloat(newScore.time) < parseFloat(scores[scores.length - 1].time);
+            } else if (gameType === 'reaction') {
+                // Lower times are better
+                return newScore.bestTime < scores[scores.length - 1].bestTime;
+            }
+            
+            return false;
+        }
+
+        function showNameModal(gameType, scoreData) {
+            currentGame = gameType;
+            currentScore = scoreData;
+            document.getElementById('nameInputModal').style.display = 'flex';
+            document.getElementById('playerNameInput').focus();
+        }
+
+        function closeNameModal() {
+            document.getElementById('nameInputModal').style.display = 'none';
+            currentGame = null;
+            currentScore = null;
+        }
+
+        function submitScore() {
+            const playerName = document.getElementById('playerNameInput').value.trim();
+            if (!playerName) {
+                alert('Please enter your name!');
+                return;
+            }
+            
+            if (currentGame && currentScore) {
+                addToLeaderboard(currentGame, { ...currentScore, name: playerName });
+                closeNameModal();
+                showLeaderboard(currentGame);
+            }
+            
+            document.getElementById('playerNameInput').value = '';
+        }
+
+        function addToLeaderboard(gameType, scoreData) {
+            const scores = JSON.parse(localStorage.getItem(`f1-${gameType}-scores`) || '[]');
+            scores.push(scoreData);
+            
+            // Sort scores
+            if (gameType === 'racing' || gameType === 'quiz' || gameType === 'strategy' || gameType === 'memory') {
+                scores.sort((a, b) => b.score - a.score); // Higher scores first
+            } else if (gameType === 'pitstop') {
+                scores.sort((a, b) => parseFloat(a.time) - parseFloat(b.time)); // Lower times first
+            } else if (gameType === 'reaction') {
+                scores.sort((a, b) => a.bestTime - b.bestTime); // Lower times first
+            }
+            
+            // Keep only top 10
+            scores.splice(10);
+            
+            localStorage.setItem(`f1-${gameType}-scores`, JSON.stringify(scores));
+        }
+
+        // Handle Enter key in name input
+        document.getElementById('playerNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitScore();
+            }
+        });
+
+        // Load initial leaderboard
+        window.addEventListener('load', () => {
+            displayLeaderboard('racing');
+        });
+    </script>
+</body>
+</html>
